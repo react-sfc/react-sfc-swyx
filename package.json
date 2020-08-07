@@ -1,0 +1,39 @@
+{
+  "name": "react-sfc",
+  "version": "0.0.1",
+  "description": "Swyx's proposal for bringing Single File Components to React. [Other proposals can be found here](https://github.com/react-sfc/react-sfc-proposal).",
+  "main": "dist/compiler.js",
+  "files": [
+    "src",
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/react-sfc/react-sfc-swyx.git"
+  },
+  "keywords": [],
+  "author": "swyx",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/react-sfc/react-sfc-swyx/issues"
+  },
+  "homepage": "https://github.com/react-sfc/react-sfc-swyx#readme",
+  "devDependencies": {
+    "@types/estree": "0.0.45",
+    "acorn-jsx": "^5.2.0",
+    "jest": "^26.2.2",
+    "typescript": "^3.9.7"
+  },
+  "dependencies": {
+    "estree-walker": "^2.0.1",
+    "magic-string": "^0.25.7"
+  }
+}
