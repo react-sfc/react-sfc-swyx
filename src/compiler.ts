@@ -209,18 +209,52 @@ export function Compiler(args: {
 
       // BINDING
       if (node.type === "JSXAttribute") {
-        // // bind:value syntax - we may want to use this
-        // if (node.name.type === 'JSXNamespacedName' && node.name.namespace.name === 'bind') {
-        //   bindValuesMap.set(node // to replace
-        //     , {
-        //     LHSname: node.name.name.name, // right now will basically only work for 'value'
-        //     RHSname: ms.slice(node.value.expression.start, node.value.expression.end)
-        //   })
+        // // bind:value syntax - we may want to use this in future?
+        // let _node = node as JSXAttribute;
+        // if (
+        //   _node.name.type === "JSXNamespacedName" &&
+        //   _node.name.namespace.name === "bind"
+        // ) {
+        //   let RHSobject, RHSname;
+        //   // TODO: in future - support RHS which is just a Literal? MAAAYBE, maybe not
+        //   if (_node.value.type === "JSXExpressionContainer") {
+        //     if (_node.value.expression.type === "Identifier") {
+        //       // RHS is just an identifier
+        //       RHSname = _node.value.expression.name;
+        //     } else if (_node.value.expression.type === "MemberExpression") {
+        //       // RHS is an object access
+        //       let exp = _node.value.expression as MemberExpression & ASTNode;
+        //       RHSobject = {
+        //         objectName:
+        //           (exp.object as Identifier).name ||
+        //           ((exp.object as MemberExpression).object as Identifier).name, // either its an identifier '$foo.bar` or a memberexpression `$foo.bar.baz`
+        //         fullAccessName: ms.slice(exp.start, exp.end),
+        //       };
+        //     } else {
+        //       throw new Error(
+        //         "warning - unrecognized RHS expression type in binding: " +
+        //           _node.value.expression.type +
+        //           ". We will probably do this wrong, pls report this along with your code"
+        //       );
+        //     }
+        //   }
+
+        //   bindValuesMap.set(
+        //     node, // to replace
+        //     {
+        //       // LHSname: _node.name.name.name.slice(1), // only tested to work for 'value'. remove the leading $
+        //       LHSname: _node.name.name.name, // only tested to work for 'value'. remove the leading $
+        //       RHSname,
+        //       RHSobject,
+        //     }
+        //   );
         // }
+
+        // $ prefix syntax
         let _node = node as JSXAttribute;
         if (
-          _node.name.type === "JSXNamespacedName" &&
-          _node.name.namespace.name === "bind"
+          _node.name.type === "JSXIdentifier" &&
+          _node.name.name.startsWith('$')
         ) {
           let RHSobject, RHSname;
           // TODO: in future - support RHS which is just a Literal? MAAAYBE, maybe not
@@ -249,7 +283,7 @@ export function Compiler(args: {
           bindValuesMap.set(
             node, // to replace
             {
-              LHSname: _node.name.name.name.slice(1), // only tested to work for 'value'. remove the leading $
+              LHSname: _node.name.name.slice(1), // only tested to work for 'value'. remove the leading $
               RHSname,
               RHSobject,
             }
@@ -267,7 +301,7 @@ export function Compiler(args: {
   // process it!
   
   */
-  if (!isReactImported) ms.prepend(`import React from 'react'`);
+  if (!isReactImported) ms.prepend(`import React from 'react';`);
   // remove STYLE and insert style jsx
   if (STYLEDECLARATION && STYLECONTENT) {
     ms.remove(STYLEDECLARATION.start, STYLEDECLARATION.end);

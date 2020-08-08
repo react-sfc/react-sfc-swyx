@@ -1,0 +1,35 @@
+import * as React from 'react'
+
+let _count = 23
+let _text = {
+  foo: 1,
+  moo: {
+    djs: 3
+  }
+}
+
+export const STYLE = `
+div {
+	color: ${_count > 5 ? 'blue' : 'green'};
+}
+`
+
+
+export default () => {
+  useEffect(() => console.log('rerendered')) // no need for React import
+  return (
+  <div>
+    Some Text
+  	<input $value={_text.moo.djs} />
+    <MyButton onClick={() => ++_count}>
+      Count {_count}
+    </MyButton>
+  </div>
+  )
+}
+
+
+// I can define inline Components like normal
+function MyButton({onClick}) {
+  return <button className="Button" {...{onClick}}>{children}</button>
+}

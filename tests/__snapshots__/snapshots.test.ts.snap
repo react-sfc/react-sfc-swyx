@@ -1,5 +1,67 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`passes binding-nested-obj snapshot test 1`] = `
+Object {
+  "css": Object {
+    "code": undefined,
+    "map": null,
+  },
+  "js": Object {
+    "code": "import * as React from 'react'
+
+
+
+
+
+
+
+export default () => {
+let [_count, set_count] = use_count_State(23)
+let [_text, set_text] = use_text_State({
+  foo: 1,
+  moo: {
+    djs: 3
+  }
+})
+  React.useEffect(() => console.log('rerendered')) // no need for React import
+  return (
+  <div>
+    Some Text
+  	<input value={_text.moo.djs} 
+        onChange={e => {
+          let temp = Object.assign({}, _text);
+          temp.moo.djs = e.target.value;
+          set_text(temp);
+        }} />
+    <MyButton onClick={() => (++_count, set_count(_count))}>
+      Count {_count}
+    </MyButton>
+  <style jsx>{\`
+div {
+	color: \${_count > 5 ? 'blue' : 'green'};
+}
+\`}</style></div>
+  )
+}
+
+
+// I can define inline Components like normal
+function MyButton({onClick}) {
+  return <button className=\\"Button\\" {...{onClick}}>{children}</button>
+}
+function use_count_State(v) {
+  const x = React.useState(v);
+  React.useDebugValue('_count: ' + x[0]); return x;
+}
+function use_text_State(v) {
+  const x = React.useState(v);
+  React.useDebugValue('_text: ' + x[0]); return x;
+}",
+    "map": null,
+  },
+}
+`;
+
 exports[`passes state-simple snapshot test 1`] = `
 Object {
   "css": Object {
@@ -7,9 +69,9 @@ Object {
     "map": null,
   },
   "js": Object {
-    "code": "import React from 'react'
+    "code": "import React from 'react';
 
-export 
+
 
 export default () => {
 let [_count, set_count] = use_count_State(0)
@@ -44,7 +106,7 @@ div {
     "map": null,
   },
   "js": Object {
-    "code": "import React from 'react'export 
+    "code": "import React from 'react';
 
 export default ({ onClick }) => {
   React.useEffect(() => console.log(\\"rerendered\\")); // no need for React import
@@ -84,7 +146,7 @@ Object {
 
 
 
-export 
+
 
 export default () => {
 let [_count, set_count] = use_count_State(23)

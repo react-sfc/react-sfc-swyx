@@ -46,6 +46,34 @@ This probably means that a successful React SFC should be a superset of normal R
 ![image](https://user-images.githubusercontent.com/6764957/89126435-3c8c9900-d518-11ea-93b2-9f2f7df14db5.png)
 
 
+## Features implemented
+
+- [x] Automatic react import
+- [x] mutable useState `_` syntax
+- [x] useStateWithLabel hook replaces useState to label in prod
+- [x] Dynamic CSS transform to styled-JSX
+- [x] `$value={$text}` binding for onChange
+  - this works for nested properties eg `$value={$text.foo}`
+
+TODO:
+
+- [ ] JS and CSS sourcemaps
+- [ ] it does not properly work with `styled-jsx` in rollup - need [SUPER hacky shit](https://twitter.com/swyx/status/1290055528068952064) to work (see boilerplate's index.html)
+- [ ] useEffect dependency tracking
+- [ ] nothing graphql related yet
+- [ ] optional `css` no-op function for syntax highlighting in JS
+- [ ] $value shorthand eg `$value`
+- [ ] $value generalized eg `$style`
+- [ ] handle multiple bindings
+- [ ] set displayName based on fileName?
+
+open questions
+
+- what binding syntax is best?
+  - considered `bind:value` but typescript does not like that
+  - `$` prefix works but doesnt look coherent with the rest of RSFC format. using this for now
+  - `_` prefix looks ugly?
+
 ## Basic Proposal
 
 Here is how we might write a React Single File Component:
@@ -208,7 +236,7 @@ let _bar = 0
 
 export default () => {
   return <form>
-    <span bind:class={{
+    <span $class={{
       class1: _foo,
       class2: _bar,
     }}>Test<span>
