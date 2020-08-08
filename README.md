@@ -19,6 +19,7 @@ how to use this:
 
 - [Design Goals](#design-goals)
 - [In 1 image](#in-1-image)
+- [Features implemented](#features-implemented)
 - [Basic Proposal](#basic-proposal)
 - [Advanced Opportunities](#advanced-opportunities)
   - [CSS in JS](#css-in-js)
