@@ -72,3 +72,50 @@ function MyButton({onClick}) {
   },
 }
 `;
+
+exports[`passes temp snapshot test 1`] = `
+Object {
+  "css": Object {
+    "code": undefined,
+    "map": null,
+  },
+  "js": Object {
+    "code": "import * as React from \\"react\\";
+
+
+
+export 
+
+export default () => {
+let [_count, set_count] = use_count_State(23)
+  React.useEffect(() => console.log(\\"rerendered\\")); // no need for React import
+  return (
+    <div>
+      Some Text
+      {/* <input bind:value={_text.moo.djs} /> */}
+      <MyButton onClick={() => (++_count, set_count(_count))}>Count {_count}</MyButton>
+    <style jsx>{\`
+div {
+	color: \${_count > 5 ? \\"blue\\" : \\"green\\"}
+}
+\`}</style></div>
+  );
+};
+
+// I can define inline Components like normal
+function MyButton({ onClick }) {
+  return (
+    <button className=\\"Button\\" {...{ onClick }}>
+      {children}
+    </button>
+  );
+}
+
+function use_count_State(v) {
+  const x = React.useState(v);
+  React.useDebugValue('_count: ' + x[0]); return x;
+}",
+    "map": null,
+  },
+}
+`;

@@ -155,7 +155,7 @@ export function Compiler(args: {
              */
 
             if (loc) {
-              STYLEDECLARATION = _node as VariableDeclaration & ASTNode;
+              STYLEDECLARATION = node as VariableDeclaration & ASTNode;
               STYLECONTENT = ms.slice(loc.start, loc.end);
             }
             // TODO - consider whether to handle Literal (just string)

@@ -3,6 +3,7 @@ import fs from "fs";
 import { Compiler } from "../src/compiler";
 fs.readdirSync("tests")
   .filter((p) => fs.lstatSync("tests/" + p).isDirectory())
+  .filter(p => !p.startsWith('__snapshots__'))
   .forEach((p) => {
     // console.log({ p });
     it(`passes ${p} snapshot test`, () => {
