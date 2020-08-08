@@ -1,0 +1,74 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`passes state-simple snapshot test 1`] = `
+Object {
+  "css": Object {
+    "code": undefined,
+    "map": null,
+  },
+  "js": Object {
+    "code": "import React from 'react'
+
+export 
+
+export default () => {
+let [_count, set_count] = use_count_State(0)
+  return <button onClick={() => (_count++, set_count(_count))}>Click {_count}<style jsx>{\`
+    button {
+      // scoped by default
+      background-color: \${_count > 5 ? 'red' : 'papayawhip'};
+    }
+  \`}</style></button>
+}
+function use_count_State(v) {
+  const x = React.useState(v);
+  React.useDebugValue('_count: ' + x[0]); return x;
+}",
+    "map": null,
+  },
+}
+`;
+
+exports[`passes styles-static snapshot test 1`] = `
+Object {
+  "css": Object {
+    "code": "
+div {
+  // scoped by default
+  background-color: papayawhip;
+  .Button {
+    border-color: cadetblue;
+  }
+}
+",
+    "map": null,
+  },
+  "js": Object {
+    "code": "import React from 'react'export 
+
+export default ({ onClick }) => {
+  React.useEffect(() => console.log(\\"rerendered\\")); // no need for React import
+  return (
+    <div>
+      Some Text
+      <MyButton {...{ onClick }}>My Call To Action</MyButton>
+    <style jsx>{\`
+div {
+  // scoped by default
+  background-color: papayawhip;
+  .Button {
+    border-color: cadetblue;
+  }
+}
+\`}</style></div>
+  );
+};
+
+// I can define inline Components like normal
+function MyButton({onClick}) {
+  return <button className=\\"Button\\" {...{onClick}}>{children}</button>
+}",
+    "map": null,
+  },
+}
+`;

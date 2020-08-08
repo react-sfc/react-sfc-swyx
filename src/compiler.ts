@@ -1,4 +1,5 @@
 import { walk } from "estree-walker";
+const {Parser} = require("acorn");
 import MagicString from "magic-string";
 import {
   ImportDeclaration,
@@ -35,66 +36,72 @@ interface ASTNode {
   start: number;
   end: number;
   type: string;
-};
+}
 
 interface JSXOpeningElement extends ASTNode {
-  type: 'JSXOpeningElement',
-  attributes: JSXAttribute[],
-  name: JSXIdentifier,
-  selfClosing: boolean
+  type: "JSXOpeningElement";
+  attributes: JSXAttribute[];
+  name: JSXIdentifier;
+  selfClosing: boolean;
 }
 interface JSXClosingElement extends ASTNode {
-  type: 'JSXClosingElement'
-  name: JSXIdentifier
+  type: "JSXClosingElement";
+  name: JSXIdentifier;
 }
 interface JSXElement extends ASTNode {
-  type: 'JSXElement',
-  attributes: JSXAttribute[],
-  openingElement: JSXOpeningElement
-  closingElement: JSXClosingElement
-  children: (JSXElement | JSXText)[]
+  type: "JSXElement";
+  attributes: JSXAttribute[];
+  openingElement: JSXOpeningElement;
+  closingElement: JSXClosingElement;
+  children: (JSXElement | JSXText)[];
 }
 interface JSXText extends ASTNode {
-  type: 'JSXText'
-  value: string,
-  raw: string
+  type: "JSXText";
+  value: string;
+  raw: string;
 }
 interface JSXAttribute extends ASTNode {
-  type: 'JSXAttribute',
-  name: JSXNamespacedName | JSXIdentifier,
-  value: JSXExpressionContainer | Literal
-} 
+  type: "JSXAttribute";
+  name: JSXNamespacedName | JSXIdentifier;
+  value: JSXExpressionContainer | Literal;
+}
 interface JSXIdentifier extends ASTNode {
-  type: 'JSXIdentifier'
-  name: string
-} 
+  type: "JSXIdentifier";
+  name: string;
+}
 interface JSXNamespacedName extends ASTNode {
-  type: 'JSXNamespacedName',
-  namespace: JSXIdentifier,
-  name: JSXIdentifier
-} 
+  type: "JSXNamespacedName";
+  namespace: JSXIdentifier;
+  name: JSXIdentifier;
+}
 interface JSXExpressionContainer extends ASTNode {
-  type: 'JSXExpressionContainer'
-  expression: Expression
-} 
+  type: "JSXExpressionContainer";
+  expression: Expression;
+}
 
 export function Compiler(args: {
   code: string;
   parser?: any; // TODO: parser type
-  useStateWithLabel?: boolean
+  useStateWithLabel?: boolean;
 }) {
-  const parser = args.parser;
+  // console.log({acorn})
+  function defaultacorn(x: string) {
+    const MyParser = Parser.extend(require('acorn-jsx')())
+    return MyParser.parse(x, {
+      sourceType: "module",
+    });
+  }
+  const parser = args.parser || defaultacorn;
   const ast: ASTNode = parser(args.code);
   let ms = new MagicString(args.code);
 
-  const isProduction = false // TODO: figure out how to get this from rollup
+  const isProduction = false; // TODO: figure out how to get this from rollup
   // undocumented option - tbd if we actually want to let users configure
   // TODO: can make it dev-only, or maybe also useful in prod?
-  const userWantsUSWL = args.useStateWithLabel || !isProduction
-
+  const userWantsUSWL = args.useStateWithLabel || !isProduction;
 
   let STYLECONTENT, STYLEDECLARATION: any; //  typescript is stupid about assignment inside an if, thinks this is a `never` or a `undefined`
-  let STYLESTATICCSS: any // just stubbing this out
+  let STYLESTATICCSS: any; // just stubbing this out
   let lastChildofDefault: any; //  typescript is stupid about assignment inside an if, thinks this is a `never` or a `undefined`
   let pos_HeadOfDefault: number;
   let stateMap = new Map();
@@ -131,21 +138,21 @@ export function Compiler(args: {
               ASTNode; // klooge as i believe TemplateLiteral type is incomplete
             // TODO: check return type of ArrowFunctionExpression as well
 
-              /**
-               * 
-               * MVP of css static export feature
-               * 
-               */
-              if (loc.type === 'TemplateLiteral' && loc.quasis.length === 1) {
-                STYLESTATICCSS = loc.quasis[0].value.raw
-                // TODO: namespace to scope to component
-                // TODO: take care of css nesting
-              } 
-              /**
-               * 
-               * end MVP of css static export feature
-               * 
-               */
+            /**
+             *
+             * MVP of css static export feature
+             *
+             */
+            if (loc.type === "TemplateLiteral" && loc.quasis.length === 1) {
+              STYLESTATICCSS = loc.quasis[0].value.raw;
+              // TODO: namespace to scope to component
+              // TODO: take care of css nesting
+            }
+            /**
+             *
+             * end MVP of css static export feature
+             *
+             */
 
             if (loc) {
               STYLEDECLARATION = _node as VariableDeclaration & ASTNode;
@@ -210,28 +217,25 @@ export function Compiler(args: {
         //     RHSname: ms.slice(node.value.expression.start, node.value.expression.end)
         //   })
         // }
-        let _node = node as JSXAttribute
+        let _node = node as JSXAttribute;
         if (
           _node.name.type === "JSXNamespacedName" &&
           _node.name.namespace.name === "bind"
         ) {
           let RHSobject, RHSname;
           // TODO: in future - support RHS which is just a Literal? MAAAYBE, maybe not
-          if (_node.value.type === 'JSXExpressionContainer') {
+          if (_node.value.type === "JSXExpressionContainer") {
             if (_node.value.expression.type === "Identifier") {
               // RHS is just an identifier
               RHSname = _node.value.expression.name;
             } else if (_node.value.expression.type === "MemberExpression") {
               // RHS is an object access
-              let exp = _node.value.expression as MemberExpression & ASTNode
+              let exp = _node.value.expression as MemberExpression & ASTNode;
               RHSobject = {
                 objectName:
                   (exp.object as Identifier).name ||
                   ((exp.object as MemberExpression).object as Identifier).name, // either its an identifier '$foo.bar` or a memberexpression `$foo.bar.baz`
-                fullAccessName: ms.slice(
-                  exp.start,
-                  exp.end
-                ),
+                fullAccessName: ms.slice(exp.start, exp.end),
               };
             } else {
               throw new Error(
@@ -240,7 +244,7 @@ export function Compiler(args: {
                   ". We will probably do this wrong, pls report this along with your code"
               );
             }
-          } 
+          }
 
           bindValuesMap.set(
             node, // to replace
@@ -267,10 +271,11 @@ export function Compiler(args: {
   // remove STYLE and insert style jsx
   if (STYLEDECLARATION && STYLECONTENT) {
     ms.remove(STYLEDECLARATION.start, STYLEDECLARATION.end);
-    if (lastChildofDefault) ms.appendRight(
-      lastChildofDefault.end,
-      `<style jsx>{${STYLECONTENT}}</style>`
-    );
+    if (lastChildofDefault)
+      ms.appendRight(
+        lastChildofDefault.end,
+        `<style jsx>{${STYLECONTENT}}</style>`
+      );
   }
 
   // useState
@@ -288,9 +293,8 @@ export function Compiler(args: {
         // rather than useDebugValue. so we do a simple alias of the hook
         ms.append(`
 function use${key}_State(v) {
-  const x = React.useState(v)
-  React.useDebugValue('${key}: ' + x[0])
-  return x;
+  const x = React.useState(v);
+  ${isProduction ? 'return x;' : `React.useDebugValue('${key}: ' + x[0]); return x;`}
 }`);
       } else {
         // just plain useState
@@ -347,8 +351,8 @@ function use${key}_State(v) {
   return {
     js: {
       code,
-      map: null // todo
-    }, 
+      map: null, // todo
+    },
     css: {
       // TODO
       // TODO
@@ -360,7 +364,7 @@ function use${key}_State(v) {
       // static css
       // THIS WHOLE THING IS A MASSIVE TODO
       code: STYLESTATICCSS,
-      map: null
+      map: null,
       // TODO
       // TODO
       // TODO
@@ -369,6 +373,6 @@ function use${key}_State(v) {
       // TODO
       // TODO
       // TODO
-    }
-  }
+    },
+  };
 }
