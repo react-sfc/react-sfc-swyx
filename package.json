@@ -1,6 +1,6 @@
 {
   "name": "react-sfc",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Swyx's proposal for bringing Single File Components to React. [Other proposals can be found here](https://github.com/react-sfc/react-sfc-proposal).",
   "main": "dist/compiler.js",
   "bin": {
