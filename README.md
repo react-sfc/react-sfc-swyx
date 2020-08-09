@@ -2,12 +2,17 @@
 
 Swyx's proposal for bringing Single File Components to React. [Other proposals can be found here](https://github.com/react-sfc/react-sfc-proposal).
 
-how to use this:
+How to use this in your app:
 
-- as a CLI
-- as a Rollup plugin: https://github.com/sw-yx/rollup-plugin-react-sfc
+1. as a CLI, to gradually adopt this in pre-existing React projects
+  - `npm i react-sfc`
+  - Create a `/react` source folder in your project.
+  - We assume you have a `/src` folder with all your React stuff
+  - now you are free to create `componentname.react` files 
+2. as a Rollup plugin
+  - Plugin: https://github.com/sw-yx/rollup-plugin-react-sfc
   - Demo: https://github.com/sw-yx/rollup-react-boilerplate
-- others... tbd
+3. others... tbd?
 
 > Special note to readers: this package is deployed to `react-sfc` on npm right now - but i am not going to be selfish at all about this. if someone else comes along with a better impl i will give you the npm name and github org. Please come and take it.
 
@@ -66,6 +71,7 @@ TODO:
 - [ ] $value generalized eg `$style`
 - [ ] handle multiple bindings
 - [ ] set displayName based on fileName?
+- [ ] test for tsx support?
 
 open questions
 

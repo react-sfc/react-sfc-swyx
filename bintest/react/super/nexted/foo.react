@@ -1,0 +1,7 @@
+let _sdlkj = {
+  foo: 23
+}
+
+export default () => {
+  return <input $value={foo._sdlkj}></input>
+}

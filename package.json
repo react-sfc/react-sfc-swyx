@@ -3,6 +3,10 @@
   "version": "0.0.1",
   "description": "Swyx's proposal for bringing Single File Components to React. [Other proposals can be found here](https://github.com/react-sfc/react-sfc-proposal).",
   "main": "dist/compiler.js",
+  "bin": {
+    "react-sfc": "./bin/cli.js",
+    "rsfc": "./bin/cli.js"
+  },
   "files": [
     "src",
     "dist",
@@ -38,7 +42,10 @@
     "typescript": "^3.9.7"
   },
   "dependencies": {
+    "chalk": "^4.1.0",
+    "cheap-watch": "^1.0.2",
     "estree-walker": "^2.0.1",
-    "magic-string": "^0.25.7"
+    "magic-string": "^0.25.7",
+    "sade": "^1.7.3"
   }
 }
