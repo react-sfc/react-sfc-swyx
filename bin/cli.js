@@ -17,43 +17,27 @@ prog
   .version(output.version)
   .command("watch")
   .describe(
-    "Transpile a directory of .react files to .js and .css files (default from react to src). Ctrl+C to kill."
+    "Transpile and watch a directory of .react files to .js and .css files (default from react to src). Ctrl+C to kill."
   )
   .example("watch")
   .option("--from, -f", "Source dir (default react)")
   .option("--to, -t", "Dist dir (default src)")
-  .option("--filetype, -t", "Filetype (default js)")
+  .option("--extension, -e", "Filetype (default js)")
   .action(async (opts) => {
     const src = opts.from || "react";
     const dst = opts.to || "src";
-    const outputFiletype = opts.filetype || "js"; // pass tsx for typescript?
+    const outputExtension = opts.extension || "js"; // pass tsx for typescript?
     console.log(
       `> watching files from ${chalk.cyan(src)} to ${chalk.cyan(dst)}`
     );
 
     const watch = new CheapWatch({ dir: src });
     await watch.init();
-
-    for (const [changedFileSemiPath, stats] of watch.paths) {
-      try {
-        if (!stats.isDirectory()) {
-          compileFile({ src, dst, semiPath: changedFileSemiPath });
-          console.log("> output " + path.join(dst, changedFileSemiPath));
-          // todo: check dst dir to delete files that are no longer in src?
-        }
-      } catch (err) {
-        console.warn(
-          chalk.yellow(
-            `Unable to compile ${changedFileSemiPath}, please edit and save`
-          )
-        );
-        console.error(err);
-      }
-    }
+    buildOnce({ paths: watch.paths, src, dst, outputExtension });
 
     watch.on("+", ({ path: _path, stats, isNew }) => {
       if (stats.isDirectory()) return;
-      compileFile({ src, dst, semiPath: _path });
+      compileFile({ src, dst, semiPath: _path, outputExtension });
       const phrase = isNew ? "created" : "updated";
       console.log(`> ${phrase} ` + path.join(dst, _path));
     });
@@ -64,13 +48,63 @@ prog
     });
   });
 
-function compileFile({ src, dst, semiPath }) {
+prog
+  .command("build")
+  .command("watch")
+  .describe(
+    "Transpile only once a directory of .react files to .js and .css files (default from react to src). Ctrl+C to kill."
+  )
+  .example("watch")
+  .option("--from, -f", "Source dir (default react)")
+  .option("--to, -t", "Dist dir (default src)")
+  .option("--extension, -e", "Filetype (default js)")
+  .action(async (opts) => {
+    const src = opts.from || "react";
+    const dst = opts.to || "src";
+    const outputExtension = opts.extension || "js"; // pass tsx for typescript?
+    console.log(
+      `> building files from ${chalk.cyan(src)} to ${chalk.cyan(dst)}`
+    );
+
+    const watch = new CheapWatch({ dir: src, watch: false });
+    await watch.init();
+    buildOnce({ paths: watch.paths, src, dst, outputExtension });
+  });
+
+
+/**
+ * 
+ * CORE FUNCTIONALITY
+ * 
+ */
+
+function buildOnce({ paths, src, dst, outputExtension }) {
+  for (const [changedFileSemiPath, stats] of paths) {
+    try {
+      if (!stats.isDirectory()) {
+        compileFile({ src, dst, semiPath: changedFileSemiPath, outputExtension });
+        console.log("> output " + path.join(dst, changedFileSemiPath));
+        // todo: check dst dir to delete files that are no longer in src?
+      }
+    } catch (err) {
+      console.warn(
+        chalk.yellow(
+          `Unable to compile ${changedFileSemiPath}, please edit and save`
+        )
+      );
+      console.error(err);
+    }
+  }
+}
+
+function compileFile({ src, dst, semiPath, outputExtension }) {
   if (!semiPath.endsWith(".react")) return;
   try {
     const changedFilePath = path.join(src, semiPath);
     const code = fs.readFileSync(changedFilePath, "utf8");
     const output = Compiler({ code });
-    const pathWithNoReact = semiPath.slice(0, semiPath.length - 5) + outputFiletype;
+    const pathWithNoReact =
+      semiPath.slice(0, semiPath.length - 5) + outputExtension;
     const destinaFilePath = path.join(dst, pathWithNoReact);
     mkdirp(destinaFilePath);
     fs.writeFileSync(destinaFilePath, output.js.code);
@@ -82,9 +116,16 @@ function compileFile({ src, dst, semiPath }) {
   }
 }
 
-console.log("hi");
+
 
 prog.parse(process.argv);
+
+
+/**
+ * 
+ * UTILS
+ *  
+ */
 
 // stats: Stats {
 //   dev: 16777220,

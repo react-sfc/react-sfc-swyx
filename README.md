@@ -1,18 +1,43 @@
-# React Single File Components
+# Experimental React Single File Components
 
-Swyx's proposal for bringing Single File Components to React. [Other proposals can be found here](https://github.com/react-sfc/react-sfc-proposal).
+Swyx's Experimental Proposal for bringing Single File Components to React. [Other proposals can be found here](https://github.com/react-sfc/react-sfc-proposal).
 
-How to use this in your app:
+> This is an experiment as a proof of concept and will just be a toy unless other folks pick it up/help contribute/maintain it! [Let me know what your interest is and help spread the word](https://twitter.com/swyx).
 
-1. as a CLI, to gradually adopt this in pre-existing React projects
+2 ways use React SFCs in your app:
+
+### As a CLI
+
+To gradually adopt this in **pre-existing** React projects - you can leave your project exactly as is and only write individual SFCs in a separate folder, without touching your bundler config at all.
+
   - `npm i react-sfc`
-  - Create a `/react` source folder in your project.
-  - We assume you have a `/src` folder with all your React stuff
-  - now you are free to create `componentname.react` files 
-2. as a Rollup plugin
+  - Create a `/react` *origin* folder in your project to watch and compile **from**.
+  - We assume you have a destination  `/src` *output* folder with the rest of your app, to compile **to**.
+  - run `react-sfc watch` or `rsfc watch`.
+  - Now you are free to create `/react/MyButton.react` files in that folder
+
+CLI Flags:
+  - If you need to customize the names of the folders that you are compiling **from** and compiling **to**, you can pass CLI flags: `react-sfc watch -f MYORIGINFOLDER -t MYOUTPUTFOLDER`
+  - By default, the CLI compiles `.react` files into `.js` files. If you need it to output `.tsx` files or other, you can pass the extension flag `--extension tsx` or `-e tsx`. *Note: the developer experience for this is not yet tested*.
+
+Other commands:
+
+  - if you don't need a `watch` workflow, you can also do single runs with other commands (same CLI flags apply):
+    - `react-sfc build` to build once
+    - `react-sfc validate` to parse your origin folder without building, to check for errors
+
+### As a Rollup plugin 
+
+In a new or pre-existing React + Rollup project
+
   - Plugin: https://github.com/sw-yx/rollup-plugin-react-sfc
   - Demo: https://github.com/sw-yx/rollup-react-boilerplate
-3. others... tbd?
+
+## Other ways
+
+TBD. need help to write a webpack plugin version of this.
+
+---
 
 > Special note to readers: this package is deployed to `react-sfc` on npm right now - but i am not going to be selfish at all about this. if someone else comes along with a better impl i will give you the npm name and github org. Please come and take it.
 
