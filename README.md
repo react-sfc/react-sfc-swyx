@@ -2,7 +2,7 @@
 
 Swyx's Experimental Proposal for bringing Single File Components to React. [Other proposals can be found here](https://github.com/react-sfc/react-sfc-proposal). The specific APIs are unstable for now and have already changed from what was shown at the React Rally talk!
 
-> This is an experiment as a proof of concept and will just be a toy unless other folks pick it up/help contribute/design/maintain it! [Let me know what your interest is and help spread the word](https://twitter.com/swyx).
+> :warning: This is an experiment/proof of concept, and is a solo endeavor not endorsed by the React team. There are legitimate design concerns raised (see Concerns section below). It may remain a toy unless other folks pick it up/help contribute/design/maintain it! [Let me know what your interest is and help spread the word](https://twitter.com/swyx).
 
 See philosophical discussion at React Rally 2020: https://www.swyx.io/speaking/react-rally-metalanguage
 
@@ -368,6 +368,13 @@ export default () => <div /> // etc
 in a file. Why would we exchange file separation for a super long file? Although there are ways to mitigate this, it is not very appealing on its own.
 
 However, to the extent that the React SFC loader is a single entry point to webpack for all these different filetypes, we have the opportunity to simplify config, skip small amounts of boilerplate, and enforce some consistency with the single file format. Having fewer files causes less pollution of IDE file namespace, and makes it easier to set up these peripheral concerns around jsx (styling, data, tests, documentation, etc) incrementally without messing with creating/deleting files.
+
+## Notable Concerns
+
+- "This is a sugar that makes things more complicated/confusing, not less. Like people aren't going to understand the boundaries of what is allowed here. Like if you can mutate the binding, can you mutate the value? Either way will cause confusion" - [source](https://twitter.com/buildsghost/status/1294355186538799105?s=20)
+  - i need to think about this but i might end up agreeing
+  - it might be possible to design around this
+
 
 ## Am I missing some obvious idea or some critical flaw?
 
