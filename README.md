@@ -158,6 +158,7 @@ export const STYLE = props => `
 In future we might offer a no-op `css` function that would make it easier for editor tooling to do CSS in JS syntax highlighting:
 
 ```js
+// NOT YET IMPLEMENTED
 export const STYLE = css`
     div { /* properly syntax highlighted */
       background-color: blue;
@@ -257,10 +258,10 @@ Local two way binding can be really nice.
 
 
 ```js
-let $text = 0
+let _text = 0
 
 export default () => {
-  return <input $value={$text} />
+  return <input $value={_text} />
 }
 ```
 
@@ -270,6 +271,7 @@ Another feature from Vue and Svelte that is handy is class binding. JSX only off
 
 
 ```js
+// NOT YET IMPLEMENTED
 let _foo = 0
 let _bar = 0
 
@@ -290,6 +292,7 @@ export default () => {
 The future of React is [Render-as-you-Fetch](https://reactjs.org/docs/concurrent-mode-suspense.html#approach-3-render-as-you-fetch-using-suspense) data, and being able to statically extract the data dependencies from the component (without rendering it) is important to avoid Data waterfalls:
 
 ```js
+// NOT YET IMPLEMENTED
 export const GRAPHQL = `
     query MYPOSTS {
       posts {
@@ -298,7 +301,7 @@ export const GRAPHQL = `
       }
     }
   `
-
+// NOT YET IMPLEMENTED
 export default function MYFILE (props, {data, status}) {
     if (typeof status === Error) return <div>Error {data.state.message}</div>
     return (
