@@ -62,6 +62,24 @@ function use_text_State(v) {
 }
 `;
 
+exports[`passes options-displayName snapshot test 1`] = `
+Object {
+  "css": Object {
+    "code": undefined,
+    "map": null,
+  },
+  "js": Object {
+    "code": "import React from 'react';const $$Component = () => {
+  return <div>div</div>
+};
+$$Component.displayName = \\"MySFC\\"
+export default $$Component
+      ",
+    "map": null,
+  },
+}
+`;
+
 exports[`passes state-simple snapshot test 1`] = `
 Object {
   "css": Object {

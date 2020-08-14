@@ -83,6 +83,7 @@ This probably means that a successful React SFC should be a superset of normal R
 - [x] mutable useState `_` syntax
 - [x] useStateWithLabel hook replaces useState to label in prod
 - [x] Dynamic CSS transform to styled-JSX
+- [x] set displayName if passed as compiler option
 - [x] `$value={$text}` binding for onChange
   - this works for nested properties eg `$value={$text.foo}`
 
@@ -96,7 +97,6 @@ TODO:
 - [ ] $value shorthand eg `$value`
 - [ ] $value generalized eg `$style`
 - [ ] handle multiple bindings
-- [ ] set displayName based on fileName?
 - [ ] test for tsx support?
 
 open questions

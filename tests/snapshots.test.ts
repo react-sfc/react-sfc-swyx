@@ -8,7 +8,12 @@ fs.readdirSync("tests")
     // console.log({ p });
     it(`passes ${p} snapshot test`, () => {
       const src = fs.readFileSync("tests/" + p + "/src.react", "utf8");
-      const output = Compiler({ code: src });
+      let options
+      if (fs.existsSync(`tests/${p}/options.json`)) {
+        options = JSON.parse(fs.readFileSync(`tests/${p}/options.json`, 'utf8'))
+        console.log({options})
+      }
+      const output = Compiler({ code: src, options });
       expect(output).toMatchSnapshot();
     });
   });

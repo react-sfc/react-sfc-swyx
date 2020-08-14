@@ -1,5 +1,5 @@
 import { walk } from "estree-walker";
-const {Parser} = require("acorn");
+const { Parser } = require("acorn");
 import MagicString from "magic-string";
 import {
   ImportDeclaration,
@@ -79,14 +79,19 @@ interface JSXExpressionContainer extends ASTNode {
   expression: Expression;
 }
 
+type CompilerOptions = {
+  useStateWithLabel?: boolean;
+  componentDisplayName?: string;
+};
+
 export function Compiler(args: {
   code: string;
   parser?: any; // TODO: parser type
-  useStateWithLabel?: boolean;
+  options?: CompilerOptions;
 }) {
   // console.log({acorn})
   function defaultacorn(x: string) {
-    const MyParser = Parser.extend(require('acorn-jsx')())
+    const MyParser = Parser.extend(require("acorn-jsx")());
     return MyParser.parse(x, {
       sourceType: "module",
     });
@@ -98,16 +103,27 @@ export function Compiler(args: {
   const isProduction = false; // TODO: figure out how to get this from rollup
   // undocumented option - tbd if we actually want to let users configure
   // TODO: can make it dev-only, or maybe also useful in prod?
-  const userWantsUSWL = args.useStateWithLabel || !isProduction;
+  const options = args.options || ({} as CompilerOptions);
+  const componentDisplayName = options.componentDisplayName;
+  const userWantsUSWL = options.useStateWithLabel || !isProduction;
 
   let STYLECONTENT, STYLEDECLARATION: any; //  typescript is stupid about assignment inside an if, thinks this is a `never` or a `undefined`
   let STYLESTATICCSS: any; // just stubbing this out
-  let lastChildofDefault: any; //  typescript is stupid about assignment inside an if, thinks this is a `never` or a `undefined`
-  let pos_HeadOfDefault: number;
+
+  /** refactoring to exportDefaultNode.. remind me to delete */
+  // let lastChildofDefault: any; //  typescript is stupid about assignment inside an if, thinks this is a `never` or a `undefined`
+  // let pos_HeadOfDefault: number;
+
+  let exportDefaultNode: {
+    lastChildofDefault?: any;
+    pos_HeadOfDefault?: number;
+    node?: ExportDefaultDeclaration & ASTNode;
+  } = {};
   let stateMap = new Map();
   let assignmentsMap = new Map();
   let bindValuesMap = new Map();
   let isReactImported = false;
+  let hasExportDefault = false; // ensure there is a default export
   walk(ast, {
     enter(node, parent, prop, index) {
       if (node.type === "ImportDeclaration") {
@@ -167,17 +183,25 @@ export function Compiler(args: {
         let _node = (node as ExportDefaultDeclaration).declaration as
           | FunctionDeclaration
           | ArrowFunctionExpression; // TODO: consider other expressions
+        exportDefaultNode.node = node as ExportDefaultDeclaration & ASTNode;
         if (_node.body.type === "BlockStatement") {
           let RSArg = (_node.body.body.find(
             (x) => x.type === "ReturnStatement"
           ) as ReturnStatement)?.argument as any; // TODO: this type is  missing JSXElement
-          if (RSArg.type === "JSXElement")
-            lastChildofDefault = RSArg.children.slice(-1)[0];
-          // use start and end
-          else throw new Error("not returning JSX in export default function"); // TODO: fix this?
+          if (RSArg.type === "JSXElement") {
+            exportDefaultNode.pos_HeadOfDefault = (_node.body as any).start + 1;
+            exportDefaultNode.lastChildofDefault = RSArg.children.slice(-1)[0];
+            hasExportDefault = true;
+            // use start and end
+          } else {
+            throw new Error("not returning JSX in export default function"); // TODO: fix this?
+          }
         }
-
-        pos_HeadOfDefault = (_node.body as any).start + 1;
+        if (!hasExportDefault) {
+          throw new Error(
+            "a React SFC must export default a function component. None was detected. Pls file an issue if this is a mistake."
+          );
+        }
       }
       // usestate
       if (node.type === "VariableDeclaration") {
@@ -254,7 +278,7 @@ export function Compiler(args: {
         let _node = node as JSXAttribute;
         if (
           _node.name.type === "JSXIdentifier" &&
-          _node.name.name.startsWith('$')
+          _node.name.name.startsWith("$")
         ) {
           let RHSobject, RHSname;
           // TODO: in future - support RHS which is just a Literal? MAAAYBE, maybe not
@@ -296,6 +320,9 @@ export function Compiler(args: {
     // }
   });
 
+  // validations
+  if (exportDefaultNode.pos_HeadOfDefault === undefined) return;
+
   /* 
   
   // process it!
@@ -305,9 +332,9 @@ export function Compiler(args: {
   // remove STYLE and insert style jsx
   if (STYLEDECLARATION && STYLECONTENT) {
     ms.remove(STYLEDECLARATION.start, STYLEDECLARATION.end);
-    if (lastChildofDefault)
+    if (exportDefaultNode.lastChildofDefault)
       ms.appendRight(
-        lastChildofDefault.end,
+        exportDefaultNode.lastChildofDefault.end,
         `<style jsx>{${STYLECONTENT}}</style>`
       );
   }
@@ -328,14 +355,18 @@ export function Compiler(args: {
         ms.append(`
 function use${key}_State(v) {
   const x = React.useState(v);
-  ${isProduction ? 'return x;' : `React.useDebugValue('${key}: ' + x[0]); return x;`}
+  ${
+    isProduction
+      ? "return x;"
+      : `React.useDebugValue('${key}: ' + x[0]); return x;`
+  }
 }`);
       } else {
         // just plain useState
         // should be 'let' bc we want to mutate it
         newStr = `\nlet [${key}, set${key}] = React.useState(${value})`;
       }
-      ms.appendRight(pos_HeadOfDefault, newStr);
+      ms.appendRight(exportDefaultNode.pos_HeadOfDefault!, newStr);
     });
   }
 
@@ -379,6 +410,22 @@ function use${key}_State(v) {
         throw new Error("we should not get here. pls repurt this binding bug");
       }
     });
+  }
+
+  // adjust for displayName
+  if (options.componentDisplayName && exportDefaultNode.node) {
+    const componentDeclarationNode: any = exportDefaultNode.node.declaration;
+    ms.overwrite(
+      exportDefaultNode.node.start,
+      exportDefaultNode.node.end,
+      `const $$Component = ${ms.slice(
+        componentDeclarationNode.start,
+        componentDeclarationNode.end
+      )};
+$$Component.displayName = "${options.componentDisplayName}"
+export default $$Component
+      `
+    );
   }
 
   let code = ms.toString();
