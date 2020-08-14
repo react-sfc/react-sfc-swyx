@@ -63,6 +63,7 @@ TBD. need help to write a webpack plugin version of this.
   - [Dev Optimizations](#dev-optimizations)
 - [Why? I don't need this!](#why-i-dont-need-this)
 - [General principle: Loaders vs SFCs](#general-principle-loaders-vs-sfcs)
+- [Notable Concerns](#notable-concerns)
 - [Am I missing some obvious idea or some critical flaw?](#am-i-missing-some-obvious-idea-or-some-critical-flaw)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
