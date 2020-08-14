@@ -4,6 +4,8 @@ Swyx's Experimental Proposal for bringing Single File Components to React. [Othe
 
 > This is an experiment as a proof of concept and will just be a toy unless other folks pick it up/help contribute/design/maintain it! [Let me know what your interest is and help spread the word](https://twitter.com/swyx).
 
+See philosophical discussion at React Rally 2020: https://www.swyx.io/speaking/react-rally-metalanguage
+
 ## Usage
 
 2 ways use React SFCs in your app:
@@ -76,7 +78,7 @@ This probably means that a successful React SFC should be a superset of normal R
 
 ## In 1 image
 
-![image](https://user-images.githubusercontent.com/6764957/89126435-3c8c9900-d518-11ea-93b2-9f2f7df14db5.png)
+![image](https://pbs.twimg.com/media/EfZQm5WU4AAj-CT?format=jpg&name=1024x1024)
 
 
 ## Features implemented
