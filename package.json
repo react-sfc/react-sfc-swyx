@@ -18,7 +18,8 @@
   },
   "scripts": {
     "build": "tsc",
-    "prepublish": "npm run build",
+    "version": "auto-changelog -p --template keepachangelog && git add CHANGELOG.md",
+    "prepublishOnly": "npm run build && git push && git push --tags && gh-release",
     "test": "jest --watch"
   },
   "repository": {
@@ -37,6 +38,8 @@
     "@types/estree": "0.0.45",
     "@types/jest": "^26.0.9",
     "acorn-jsx": "^5.2.0",
+    "auto-changelog": "^2.2.0",
+    "gh-release": "^3.5.0",
     "jest": "^26.2.2",
     "ts-jest": "^26.1.4",
     "typescript": "^3.9.7"
