@@ -1,1 +1,5 @@
-export default () => <div>sldkj</div>
+let _abc = 123
+
+export default () => {
+  return <button onClick={() => _abc++}>{_abc}</button>
+}

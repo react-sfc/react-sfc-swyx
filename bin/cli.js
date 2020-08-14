@@ -50,11 +50,10 @@ prog
 
 prog
   .command("build")
-  .command("watch")
   .describe(
     "Transpile only once a directory of .react files to .js and .css files (default from react to src). Ctrl+C to kill."
   )
-  .example("watch")
+  .example("build")
   .option("--from, -f", "Source dir (default react)")
   .option("--to, -t", "Dist dir (default src)")
   .option("--extension, -e", "Filetype (default js)")
