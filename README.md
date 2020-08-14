@@ -1,8 +1,10 @@
 # Experimental React Single File Components
 
-Swyx's Experimental Proposal for bringing Single File Components to React. [Other proposals can be found here](https://github.com/react-sfc/react-sfc-proposal).
+Swyx's Experimental Proposal for bringing Single File Components to React. [Other proposals can be found here](https://github.com/react-sfc/react-sfc-proposal). The specific APIs are unstable for now and have already changed from what was shown at the React Rally talk!
 
-> This is an experiment as a proof of concept and will just be a toy unless other folks pick it up/help contribute/maintain it! [Let me know what your interest is and help spread the word](https://twitter.com/swyx).
+> This is an experiment as a proof of concept and will just be a toy unless other folks pick it up/help contribute/design/maintain it! [Let me know what your interest is and help spread the word](https://twitter.com/swyx).
+
+## Usage
 
 2 ways use React SFCs in your app:
 
@@ -92,19 +94,20 @@ TODO:
 - [ ] JS and CSS sourcemaps
 - [ ] it does not properly work with `styled-jsx` in rollup - need [SUPER hacky shit](https://twitter.com/swyx/status/1290055528068952064) to work (see boilerplate's index.html)
 - [ ] useEffect dependency tracking
+- [ ] automatically extract text for i18n
 - [ ] nothing graphql related yet
 - [ ] optional `css` no-op function for syntax highlighting in JS
 - [ ] $value shorthand eg `$value`
 - [ ] $value generalized eg `$style`
 - [ ] handle multiple bindings
-- [ ] test for tsx support?
+- [ ] test for TSX support?
 
 open questions
 
 - what binding syntax is best?
   - considered `bind:value` but typescript does not like that
   - `$` prefix works but doesnt look coherent with the rest of RSFC format. using this for now
-  - `_` prefix looks ugly?
+  - `_` prefix looks ugly? <- went with this one
 
 ## Basic Proposal
 
