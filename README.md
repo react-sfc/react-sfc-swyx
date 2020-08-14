@@ -78,7 +78,8 @@ This probably means that a successful React SFC should be a superset of normal R
 
 ## In 1 image
 
-![image](https://pbs.twimg.com/media/EfZQm5WU4AAj-CT?format=jpg&name=1024x1024)
+![image](https://user-images.githubusercontent.com/6764957/90271942-32ab5400-de8f-11ea-91a8-8a0cebebd6aa.png)
+
 
 
 ## Features implemented
