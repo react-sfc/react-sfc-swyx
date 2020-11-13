@@ -4,7 +4,7 @@ Swyx's Experimental Proposal for bringing Single File Components to React. [Othe
 
 > :warning: This is an experiment/proof of concept, and is a solo endeavor not endorsed by the React team. There are legitimate design concerns raised (see Concerns section below). It may remain a toy unless other folks pick it up/help contribute/design/maintain it! [Let me know what your interest is and help spread the word](https://twitter.com/swyx).
 
-See philosophical discussion at React Rally 2020: https://www.swyx.io/speaking/react-rally-metalanguage
+See philosophical discussion at React Rally 2020: https://www.youtube.com/watch?v=18F5v1diO_A
 
 ## Usage
 
